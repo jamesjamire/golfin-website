@@ -63,7 +63,7 @@ export default function AdminDashboard() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white mb-2">Admin Dashboard</h1>
         <p className="text-gray-500 text-sm">
-          Manage your GOLFIN website content from here.
+          Manage your Pro Dullah website content from here.
         </p>
       </div>
 

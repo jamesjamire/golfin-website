@@ -9,12 +9,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "GOLFIN – Take Your Golf Game To The Next Level",
+  title: "Pro Dullah – Take Your Golf Game To The Next Level",
   description:
-    "Experience the ultimate golfing journey with expert tips, pro strategies, and professional insights. Join 12k+ members at GOLFIN.",
-  keywords: "golf, golfing, golf tips, golf community, golf events, golf training",
+    "Experience the ultimate golfing journey with expert tips, pro strategies, and professional insights. Join 12k+ members at Pro Dullah.",
+  keywords: "golf, golfing, golf tips, golf community, golf events, golf training, pro dullah",
   openGraph: {
-    title: "GOLFIN – Take Your Golf Game To The Next Level",
+    title: "Pro Dullah – Take Your Golf Game To The Next Level",
     description:
       "Experience the ultimate golfing journey with expert tips, pro strategies, and professional insights.",
     type: "website",

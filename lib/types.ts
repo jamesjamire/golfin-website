@@ -200,5 +200,5 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     about: "#",
     pricing: "#",
   },
-  copyright: "© Copyright 2025, All Rights Reserved",
+  copyright: "© Copyright 2025, Pro Dullah. All Rights Reserved",
 };

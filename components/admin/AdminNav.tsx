@@ -74,11 +74,10 @@ export default function AdminNav() {
       {/* Logo */}
       <div className="p-6 border-b border-gray-800">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="relative w-7 h-7">
-            <Image src="/golf-logo.svg" alt="GOLFIN" fill className="object-contain" />
+          <div className="relative w-10 h-10">
+            <Image src="/pro-dulla-logo.jpeg" alt="Pro Dulla" fill className="object-contain" />
           </div>
           <div>
-            <span className="text-white font-bold text-lg">GOLFIN</span>
             <span className="block text-[#8DC63F] text-xs font-medium">Admin Panel</span>
           </div>
         </Link>

@@ -71,10 +71,9 @@ export default function Footer({ settings }: FooterProps) {
           <div className="lg:col-span-2">
             {/* Logo */}
             <div className="flex items-center gap-2 mb-6">
-              <div className="relative w-7 h-7">
-                <Image src="/golf-logo.svg" alt="GOLFIN" fill className="object-contain" />
+              <div className="relative w-14 h-14">
+                <Image src="/pro-dulla-logo.jpeg" alt="Pro Dulla" fill className="object-contain" />
               </div>
-              <span className="text-xl font-bold text-white">GOLFIN</span>
             </div>
 
             <p className="text-gray-500 text-sm leading-relaxed mb-6 max-w-xs">

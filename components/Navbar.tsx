@@ -28,17 +28,14 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative w-8 h-8 group-hover:scale-110 transition-transform">
+            <div className="relative w-12 h-12 group-hover:scale-110 transition-transform">
               <Image
-                src="/golf-logo.svg"
-                alt="GOLFIN Logo"
+                src="/pro-dulla-logo.jpeg"
+                alt="Pro Dulla Logo"
                 fill
                 className="object-contain"
               />
             </div>
-            <span className="text-xl font-bold tracking-wider text-white group-hover:text-[#8DC63F] transition-colors">
-              GOLFIN
-            </span>
           </Link>
 
           {/* Desktop Nav */}

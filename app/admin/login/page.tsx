@@ -52,11 +52,10 @@ export default function AdminLoginPage() {
         <div className="bg-[#111111] border border-gray-800 rounded-2xl p-8 shadow-2xl">
           {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="relative w-10 h-10">
-              <Image src="/golf-logo.svg" alt="GOLFIN" fill className="object-contain" />
+            <div className="relative w-16 h-16">
+              <Image src="/pro-dulla-logo.jpeg" alt="Pro Dulla" fill className="object-contain" />
             </div>
             <div className="text-center">
-              <div className="text-white font-bold text-2xl">GOLFIN</div>
               <div className="text-[#8DC63F] text-xs font-medium tracking-widest uppercase">
                 Admin Access
               </div>
@@ -145,7 +144,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center text-gray-700 text-xs mt-4">
-          GOLFIN Admin Panel v1.0 &copy; 2025
+          Pro Dullah Admin Panel v1.0 &copy; 2025
         </p>
       </div>
     </div>
