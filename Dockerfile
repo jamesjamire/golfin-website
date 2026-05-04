@@ -3,6 +3,16 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+
+# Firebase + site env vars baked into Next.js build
+ENV NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyBRJjR1MDPKmLwWFIT-tgAJOeg7yCrQmiQ
+ENV NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=gen-lang-client-0630482107.firebaseapp.com
+ENV NEXT_PUBLIC_FIREBASE_PROJECT_ID=gen-lang-client-0630482107
+ENV NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=gen-lang-client-0630482107.firebasestorage.app
+ENV NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=820138942324
+ENV NEXT_PUBLIC_FIREBASE_APP_ID=1:820138942324:web:e50d3bd57ec9b278485621
+ENV NEXT_PUBLIC_SITE_URL=https://golfin-website-812201598662.europe-west1.run.app
+
 RUN npm run build
 EXPOSE 3000
 CMD ["npm", "start"]
