@@ -1,13 +1,54 @@
 "use client";
 
 import Image from "next/image";
-import { HeroContent } from "@/lib/types";
+import { useState } from "react";
+import { HeroContent, BookingSession } from "@/lib/types";
 
 interface HeroProps {
   content: HeroContent;
+  bookingSessions: BookingSession[];
 }
 
-export default function Hero({ content }: HeroProps) {
+export default function Hero({ content, bookingSessions }: HeroProps) {
+  const [activeType, setActiveType] = useState<"lesson" | "game">("lesson");
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  const sessions = bookingSessions.filter(
+    (s) => s.active && s.type === activeType
+  );
+  const session = sessions[0] || null;
+
+  const spotsLeft = session ? session.maxSpots - session.bookedSpots : 0;
+  const spotsPercent = session
+    ? (session.bookedSpots / session.maxSpots) * 100
+    : 0;
+
+  const handleBook = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!session) return;
+    setSubmitting(true);
+    setFormError("");
+    try {
+      const res = await fetch("/api/bookings/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId: session.id, ...form }),
+      });
+      if (!res.ok) throw new Error("Booking failed");
+      setSubmitted(true);
+      setShowForm(false);
+      setForm({ name: "", email: "", phone: "" });
+    } catch {
+      setFormError("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
       {/* Background Image */}
@@ -20,7 +61,6 @@ export default function Hero({ content }: HeroProps) {
           className="object-cover object-center"
           sizes="100vw"
         />
-        {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-transparent" />
       </div>
@@ -60,7 +100,7 @@ export default function Hero({ content }: HeroProps) {
               {content.subtext}
             </p>
 
-            {/* Avatar Group + Membership */}
+            {/* Avatar Group + Students Count */}
             <div className="flex items-center gap-4">
               <div className="flex -space-x-3">
                 {[1, 2, 3, 4, 5].map((i) => (
@@ -75,97 +115,202 @@ export default function Hero({ content }: HeroProps) {
                 ))}
               </div>
               <div>
-                <div className="text-[#8DC63F] font-bold text-xl">{content.membershipCount}</div>
-                <div className="text-gray-400 text-sm">Membership</div>
+                <div className="text-[#8DC63F] font-bold text-xl">{content.studentsCount}</div>
+                <div className="text-gray-400 text-sm">Students Taught</div>
               </div>
             </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4">
-              <button className="bg-[#8DC63F] text-black font-semibold px-8 py-3.5 rounded-full hover:bg-[#7ab535] hover:scale-105 transition-all shadow-lg shadow-[#8DC63F]/30">
+              <button
+                onClick={() => {
+                  setActiveType("lesson");
+                  document.getElementById("booking-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  setTimeout(() => setShowForm(true), 400);
+                }}
+                className="bg-[#8DC63F] text-black font-semibold px-8 py-3.5 rounded-full hover:bg-[#7ab535] hover:scale-105 transition-all shadow-lg shadow-[#8DC63F]/30"
+              >
                 Get Started
               </button>
-              <button className="flex items-center gap-2 text-white border border-white/30 hover:border-[#8DC63F] hover:text-[#8DC63F] px-8 py-3.5 rounded-full transition-all backdrop-blur-sm">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Watch Video
-              </button>
+              {content.videoLink ? (
+                <a
+                  href={content.videoLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-white border border-white/30 hover:border-[#8DC63F] hover:text-[#8DC63F] px-8 py-3.5 rounded-full transition-all backdrop-blur-sm"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Watch Video
+                </a>
+              ) : null}
             </div>
           </div>
 
-          {/* Right Side - Schedule Card */}
+          {/* Right Side - Booking Card */}
           <div className="flex justify-center lg:justify-end">
             <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-              {/* Card Header */}
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <div className="text-[#8DC63F] text-xs font-semibold uppercase tracking-wider mb-1">
-                    Schedule
-                  </div>
-                  <div className="text-white font-bold text-lg">{content.schedule.day}</div>
-                  <div className="text-gray-400 text-sm">{content.schedule.level}</div>
-                </div>
-                <div className="bg-[#8DC63F]/20 border border-[#8DC63F]/30 rounded-xl p-3 text-center">
-                  <div className="text-[#8DC63F] font-bold text-lg leading-none">
-                    {content.schedule.time.split(":")[0]}
-                  </div>
-                  <div className="text-[#8DC63F] text-xs">
-                    :{content.schedule.time.split(":")[1]}
-                  </div>
-                  <div className="text-gray-400 text-xs mt-1">AM</div>
-                </div>
+
+              {/* Type Toggle */}
+              <div className="flex bg-white/5 rounded-xl p-1 mb-5">
+                <button
+                  onClick={() => { setActiveType("lesson"); setShowForm(false); setSubmitted(false); }}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    activeType === "lesson"
+                      ? "bg-[#8DC63F] text-black"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Book a Lesson
+                </button>
+                <button
+                  onClick={() => { setActiveType("game"); setShowForm(false); setSubmitted(false); }}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    activeType === "game"
+                      ? "bg-[#8DC63F] text-black"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Book a Game
+                </button>
               </div>
 
-              {/* Participants */}
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex -space-x-2">
-                  {Array.from({ length: content.schedule.participants }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="w-8 h-8 rounded-full border-2 border-black bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center"
-                    >
-                      <svg className="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12z" />
-                      </svg>
+              {submitted ? (
+                <div className="text-center py-6">
+                  <div className="w-12 h-12 bg-[#8DC63F]/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-[#8DC63F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="text-white font-bold mb-1">Booking Confirmed!</p>
+                  <p className="text-gray-400 text-sm">We&apos;ll be in touch shortly.</p>
+                  <button
+                    onClick={() => setSubmitted(false)}
+                    className="mt-4 text-[#8DC63F] text-sm underline"
+                  >
+                    Book another
+                  </button>
+                </div>
+              ) : session ? (
+                <>
+                  {/* Session Info */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <div className="text-[#8DC63F] text-xs font-semibold uppercase tracking-wider mb-1">
+                        {activeType === "lesson" ? "Lesson" : "Game"}
+                      </div>
+                      <div className="text-white font-bold text-lg">{session.day}</div>
+                      <div className="text-gray-400 text-sm">{session.level}</div>
+                      {activeType === "lesson" && session.instructor && (
+                        <div className="text-gray-400 text-xs mt-0.5">with {session.instructor}</div>
+                      )}
                     </div>
-                  ))}
-                </div>
-                <span className="text-gray-300 text-sm">
-                  {content.schedule.participants} participants
-                </span>
-              </div>
+                    <div className="bg-[#8DC63F]/20 border border-[#8DC63F]/30 rounded-xl p-3 text-center min-w-[56px]">
+                      <div className="text-[#8DC63F] font-bold text-lg leading-none">
+                        {session.time.split(":")[0]}
+                      </div>
+                      <div className="text-[#8DC63F] text-xs">
+                        :{session.time.split(":")[1]?.replace(" AM", "").replace(" PM", "")}
+                      </div>
+                      <div className="text-gray-400 text-xs mt-1">
+                        {session.time.includes("PM") ? "PM" : "AM"}
+                      </div>
+                    </div>
+                  </div>
 
-              {/* Stats Row */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white/5 rounded-xl p-3">
-                  <div className="text-gray-400 text-xs mb-1">Course</div>
-                  <div className="text-white font-semibold text-sm">Green Valley</div>
-                </div>
-                <div className="bg-white/5 rounded-xl p-3">
-                  <div className="text-gray-400 text-xs mb-1">Par</div>
-                  <div className="text-white font-semibold text-sm">72 Holes</div>
-                </div>
-              </div>
+                  {/* Course + Par / Price */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="bg-white/5 rounded-xl p-3">
+                      <div className="text-gray-400 text-xs mb-1">Course</div>
+                      <div className="text-white font-semibold text-sm">{session.course}</div>
+                    </div>
+                    <div className="bg-white/5 rounded-xl p-3">
+                      <div className="text-gray-400 text-xs mb-1">
+                        {activeType === "game" ? "Par" : "Price"}
+                      </div>
+                      <div className="text-white font-semibold text-sm">
+                        {activeType === "game" ? session.par : session.price}
+                      </div>
+                    </div>
+                  </div>
 
-              {/* Progress */}
-              <div className="mt-4">
-                <div className="flex justify-between text-xs text-gray-400 mb-1.5">
-                  <span>Spots Available</span>
-                  <span>{content.schedule.participants}/8</span>
-                </div>
-                <div className="w-full bg-white/10 rounded-full h-1.5">
-                  <div
-                    className="bg-[#8DC63F] h-1.5 rounded-full"
-                    style={{ width: `${(content.schedule.participants / 8) * 100}%` }}
-                  />
-                </div>
-              </div>
+                  {/* Spots */}
+                  <div className="mb-4">
+                    <div className="flex justify-between text-xs text-gray-400 mb-1.5">
+                      <span>Spots Available</span>
+                      <span>{spotsLeft}/{session.maxSpots}</span>
+                    </div>
+                    <div className="w-full bg-white/10 rounded-full h-1.5">
+                      <div
+                        className="bg-[#8DC63F] h-1.5 rounded-full transition-all"
+                        style={{ width: `${spotsPercent}%` }}
+                      />
+                    </div>
+                  </div>
 
-              <button className="w-full mt-5 bg-[#8DC63F] text-black font-semibold py-3 rounded-xl hover:bg-[#7ab535] transition-all hover:scale-[1.02]">
-                Join Session
-              </button>
+                  {/* Booking Form (inline) */}
+                  {showForm ? (
+                    <form onSubmit={handleBook} className="space-y-3">
+                      <input
+                        type="text"
+                        placeholder="Your name"
+                        required
+                        value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        className="w-full bg-white/10 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 placeholder-gray-500 focus:outline-none focus:border-[#8DC63F]"
+                      />
+                      <input
+                        type="email"
+                        placeholder="Email address"
+                        required
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        className="w-full bg-white/10 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 placeholder-gray-500 focus:outline-none focus:border-[#8DC63F]"
+                      />
+                      <input
+                        type="tel"
+                        placeholder="Phone (optional)"
+                        value={form.phone}
+                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                        className="w-full bg-white/10 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 placeholder-gray-500 focus:outline-none focus:border-[#8DC63F]"
+                      />
+                      {formError && (
+                        <p className="text-red-400 text-xs">{formError}</p>
+                      )}
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowForm(false)}
+                          className="flex-1 py-2.5 rounded-xl border border-white/10 text-gray-400 text-sm hover:text-white transition-all"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={submitting || spotsLeft === 0}
+                          className="flex-1 py-2.5 bg-[#8DC63F] text-black font-semibold rounded-xl text-sm hover:bg-[#7ab535] transition-all disabled:opacity-50"
+                        >
+                          {submitting ? "Booking..." : "Confirm"}
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <button
+                      onClick={() => setShowForm(true)}
+                      disabled={spotsLeft === 0}
+                      className="w-full bg-[#8DC63F] text-black font-semibold py-3 rounded-xl hover:bg-[#7ab535] transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {spotsLeft === 0 ? "Fully Booked" : `Book ${activeType === "lesson" ? "Lesson" : "Game"} — ${session.price}`}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-8 text-gray-500 text-sm">
+                  No {activeType} sessions available right now.
+                </div>
+              )}
             </div>
           </div>
         </div>

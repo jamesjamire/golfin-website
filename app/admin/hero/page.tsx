@@ -119,15 +119,29 @@ export default function AdminHeroPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">
-              Membership Count
+              Students Taught
             </label>
             <input
               type="text"
-              value={content.membershipCount}
-              onChange={(e) => update("membershipCount", e.target.value)}
+              value={(content as unknown as Record<string, string>).studentsCount ?? (content as unknown as Record<string, string>).membershipCount ?? ""}
+              onChange={(e) => update("studentsCount", e.target.value)}
               placeholder="12k +"
               className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-[#8DC63F] transition-colors"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Watch Video Link
+            </label>
+            <input
+              type="url"
+              value={(content as unknown as Record<string, string>).videoLink ?? ""}
+              onChange={(e) => update("videoLink", e.target.value)}
+              placeholder="https://youtube.com/... or https://instagram.com/..."
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-[#8DC63F] transition-colors"
+            />
+            <p className="text-gray-500 text-xs mt-1">Paste a YouTube or Instagram video link. Leave blank to hide the button.</p>
           </div>
         </div>
 

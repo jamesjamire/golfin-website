@@ -74,9 +74,9 @@ export default function Navbar() {
             </Link>
 
             {/* Sign In */}
-            <button className="text-sm text-gray-300 hover:text-white transition-colors font-medium border border-gray-600 hover:border-[#8DC63F] px-4 py-2 rounded-full">
+            <Link href="/admin/login" className="text-sm text-gray-300 hover:text-white transition-colors font-medium border border-gray-600 hover:border-[#8DC63F] px-4 py-2 rounded-full">
               Sign In
-            </button>
+            </Link>
 
             {/* Cart */}
             <button className="relative text-gray-300 hover:text-white transition-colors">
@@ -126,9 +126,9 @@ export default function Navbar() {
               <Link href="#contact" className="bg-[#8DC63F] text-black font-semibold px-5 py-2 rounded-full text-center hover:bg-[#7ab535] transition-all">
                 Contact Us
               </Link>
-              <button className="text-gray-300 hover:text-white border border-gray-600 px-4 py-2 rounded-full">
+              <Link href="/admin/login" className="text-gray-300 hover:text-white border border-gray-600 px-4 py-2 rounded-full text-center">
                 Sign In
-              </button>
+              </Link>
             </div>
           </div>
         )}

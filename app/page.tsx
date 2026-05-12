@@ -10,40 +10,47 @@ import {
   DEFAULT_EVENTS,
   DEFAULT_STATS,
   DEFAULT_SETTINGS,
+  DEFAULT_BOOKING_SESSIONS,
   HeroContent,
   StoryContent,
   Event,
   StatsContent,
   SiteSettings,
+  BookingSession,
 } from "@/lib/types";
 
-async function fetchContent<T>(url: string, fallback: T): Promise<T> {
+async function fetchFromFirestore<T>(collection: string, doc: string | null, fallback: T): Promise<T> {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}${url}`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) return fallback;
-    return await res.json();
-  } catch {
-    return fallback;
-  }
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    if (projectId && projectId !== "your_project_id") {
+      const { getAdminDb } = await import("@/lib/firebaseAdmin");
+      const db = getAdminDb();
+      if (doc) {
+        const snap = await db.collection(collection).doc(doc).get();
+        if (snap.exists) return snap.data() as T;
+      } else {
+        const snap = await db.collection(collection).orderBy("createdAt", "desc").get();
+        if (!snap.empty) return snap.docs.map(d => ({ id: d.id, ...d.data() })) as T;
+      }
+    }
+  } catch {}
+  return fallback;
 }
 
 export default async function Home() {
-  const [hero, story, events, stats, settings] = await Promise.all([
-    fetchContent<HeroContent>("/api/content/hero", DEFAULT_HERO),
-    fetchContent<StoryContent>("/api/content/story", DEFAULT_STORY),
-    fetchContent<Event[]>("/api/content/events", DEFAULT_EVENTS),
-    fetchContent<StatsContent>("/api/content/stats", DEFAULT_STATS),
-    fetchContent<SiteSettings>("/api/content/settings", DEFAULT_SETTINGS),
+  const [hero, story, events, stats, settings, bookingSessions] = await Promise.all([
+    fetchFromFirestore<HeroContent>("content", "hero", DEFAULT_HERO),
+    fetchFromFirestore<StoryContent>("content", "story", DEFAULT_STORY),
+    fetchFromFirestore<Event[]>("events", null, DEFAULT_EVENTS),
+    fetchFromFirestore<StatsContent>("content", "stats", DEFAULT_STATS),
+    fetchFromFirestore<SiteSettings>("content", "settings", DEFAULT_SETTINGS),
+    fetchFromFirestore<BookingSession[]>("bookingSessions", null, DEFAULT_BOOKING_SESSIONS),
   ]);
 
   return (
     <main className="bg-[#0a0a0a] min-h-screen">
       <Navbar />
-      <Hero content={hero} />
+      <Hero content={hero} bookingSessions={bookingSessions} />
       <Story content={story} />
       <Events events={events} />
       <Stats content={stats} />

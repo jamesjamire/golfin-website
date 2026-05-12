@@ -42,6 +42,19 @@ export default function AdminDashboard() {
       iconColor: "text-[#8DC63F]",
     },
     {
+      href: "/admin/bookings",
+      title: "Bookings Manager",
+      description: "Create and manage lesson and game sessions that users can book from the homepage",
+      icon: (
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      ),
+      color: "from-green-500/20 to-green-600/10",
+      border: "border-green-500/20",
+      iconColor: "text-green-400",
+    },
+    {
       href: "/admin/settings",
       title: "Site Settings",
       description: "Manage social media links, footer navigation, and copyright text",

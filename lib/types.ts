@@ -14,7 +14,8 @@ export interface HeroContent {
   };
   headline: string;
   subtext: string;
-  membershipCount: string;
+  studentsCount: string;
+  videoLink: string;
 }
 
 export interface StoryContent {
@@ -100,7 +101,8 @@ export const DEFAULT_HERO: HeroContent = {
   headline: "Take Your Golf Game To The Next Level.",
   subtext:
     "Experience the ultimate golfing journey with expert tips, pro strategies, and professional insights",
-  membershipCount: "12k +",
+  studentsCount: "12k +",
+  videoLink: "",
 };
 
 export const DEFAULT_STORY: StoryContent = {
@@ -174,6 +176,59 @@ export const DEFAULT_STATS: StatsContent = {
   userGrowthSubtext: "Relative To The Previous Year",
   userGrowthCta: "Improve Your Game Today",
 };
+
+export interface BookingSession {
+  id: string;
+  type: "lesson" | "game";
+  title: string;
+  day: string;
+  date: string;
+  time: string;
+  course: string;
+  par: string;
+  maxSpots: number;
+  bookedSpots: number;
+  price: string;
+  instructor: string;
+  level: string;
+  active: boolean;
+  createdAt?: string;
+}
+
+export const DEFAULT_BOOKING_SESSIONS: BookingSession[] = [
+  {
+    id: "lesson-sat-1",
+    type: "lesson",
+    title: "Beginner Golf Lesson",
+    day: "Saturday",
+    date: "",
+    time: "10:00 AM",
+    course: "Green Valley",
+    par: "",
+    maxSpots: 8,
+    bookedSpots: 4,
+    price: "TZS 500",
+    instructor: "Coach Pro Dullah",
+    level: "Beginners",
+    active: true,
+  },
+  {
+    id: "game-sun-1",
+    type: "game",
+    title: "Sunday Morning Game",
+    day: "Sunday",
+    date: "",
+    time: "07:00 AM",
+    course: "Green Valley",
+    par: "72 Holes",
+    maxSpots: 8,
+    bookedSpots: 3,
+    price: "TZS 800",
+    instructor: "",
+    level: "All Levels",
+    active: true,
+  },
+];
 
 export const DEFAULT_SETTINGS: SiteSettings = {
   socialLinks: {
