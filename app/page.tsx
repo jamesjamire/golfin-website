@@ -29,7 +29,12 @@ async function fetchFromFirestore<T>(collection: string, doc: string | null, fal
         const snap = await db.collection(collection).doc(doc).get();
         if (snap.exists) return snap.data() as T;
       } else {
-        const snap = await db.collection(collection).orderBy("createdAt", "desc").get();
+        let snap;
+        try {
+          snap = await db.collection(collection).orderBy("createdAt", "desc").get();
+        } catch {
+          snap = await db.collection(collection).get();
+        }
         if (!snap.empty) return snap.docs.map(d => ({ id: d.id, ...d.data() })) as T;
       }
     }
