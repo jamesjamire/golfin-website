@@ -10,17 +10,17 @@ export async function GET() {
       try {
         const { getAdminDb } = await import("@/lib/firebaseAdmin");
         const db = getAdminDb();
-        const snapshot = await db
-          .collection("events")
-          .orderBy("createdAt", "desc")
-          .get();
-        if (!snapshot.empty) {
-          const events = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as Event[];
-          return NextResponse.json(events);
+        let snapshot;
+        try {
+          snapshot = await db.collection("events").orderBy("createdAt", "desc").get();
+        } catch {
+          snapshot = await db.collection("events").get();
         }
+        const events = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Event[];
+        return NextResponse.json(events);
       } catch (dbErr) {
         console.warn("Firestore unavailable:", dbErr);
       }
